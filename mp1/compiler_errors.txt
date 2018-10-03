@@ -1,4 +1,4 @@
-compilation of version 17 failed with:
+compilation of version 18 failed with:
 mkdir -p obj
 cc -g -Wall -Wextra -Wno-sign-compare -c -o obj/http_server.o src/http_server.c
 src/http_server.c: In function ‘sigchld_handler’:
@@ -28,9 +28,6 @@ src/http_client.c:231:26: error: ‘MAXIMUMDATA’ undeclared (first use in this
    memset(recvingbuf,'\0',MAXIMUMDATA);
                           ^
 src/http_client.c:231:26: note: each undeclared identifier is reported only once for each function it appears in
-src/http_client.c:237:4: error: expected ‘;’ before ‘printf’
-    printf("num in line: %d\n",numbytes);
-    ^
 src/http_client.c:172:12: warning: unused variable ‘portb’ [-Wunused-variable]
        char portb = port;
             ^

@@ -13,3 +13,5 @@ all-time best score (your current grade): 75/100
 
 Version 17:
 *******CHECK compiler_errors.txt FOR RESULTS!!!******
+Version 18:
+*******CHECK compiler_errors.txt FOR RESULTS!!!******
