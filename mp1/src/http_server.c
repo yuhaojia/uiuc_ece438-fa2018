@@ -187,6 +187,7 @@ int main(int argc,char*argv[])
 			//But we only need URL as extracts;
 			int numsent;
 			char URLpath[100];
+			char line[500];
 			strncpy(URLpath,buffbuff+1,strlen(buffbuff));
 			printf("%s\n",URLpath);
 			FILE*pfile=fopen(URLpath,"r");
