@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
 
     freeaddrinfo(servinfo); // all done with this structure
     FILE *fp;
-	fp=fopen("output","a+");
+	fp=fopen("output","a");
   /*do{
       numbytes =recv(sockfd, recvingbuf, MAXDATASIZE-1, 0);
       if (numbytes > 0){

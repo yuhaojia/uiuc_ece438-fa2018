@@ -133,6 +133,7 @@ int main(int argc,char*argv[])
 		if (!fork()) { // this is the child process
 			close(sockfd); // child doesn't need the listener
 			recvsize=recv(new_fd,serverbuff,MAXDATASIZE-1,0);
+			buf[numbytes] = '\0';
 			printf("%s\n",serverbuff);
 
 			char buffbuff[1000];
@@ -188,9 +189,10 @@ int main(int argc,char*argv[])
 			int numsent;
 			char URLpath[100];
 			char line[500];
+			char filebuff[MAXDATASIZE];
 			strncpy(URLpath,buffbuff+1,strlen(buffbuff));
 			printf("%s\n",URLpath);
-			FILE*pfile=fopen(URLpath,"rb");
+			FILE*pfile=fopen(URLpath,"r");
 			//char filebuff[MAXIMUMDATA];
 			if(pfile==NULL){
 			  printf(RESP_404);
@@ -203,6 +205,7 @@ exit(0);
 
 
 			else{
+			memset(filebuff,'\0',MAXDATASIZE)
 			//send(new_fd,RESP_200,strlen(RESP_200),0);
 			  fseek(pfile,0,SEEK_END);//located the END position
         		int filelen=ftell(pfile);//got file length
@@ -214,7 +217,7 @@ exit(0);
 
 			    //line[strlen(line)]='\0';
 			    if(readlen>0){
-			    	send(new_fd,line,strlen(line),0);
+			    	send(new_fd,filebuff,strlen(line),0);
 			    	filelen=filelen-readlen;
 			    	printf("numof bytes sent:%d\n",strlen(line));
 			    }
