@@ -228,11 +228,14 @@ int main(int argc, char *argv[])
     freeaddrinfo(servinfo); // all done with this structure
     FILE *fp;
 	fp=fopen("output","w");
+  memset(recvingbuf,'\0',MAXIMUMDATA);
     while(1){
 		if((numbytes=recv(sockfd,recvingbuf,MAXDATASIZE-1,0))>0){
-			fprintf(fp,"%s",recvingbuf);
+			fwrite(recvingbuf, 1, numbytes,fp);
 			printf("%s",recvingbuf);
+      recvingbuf[numbytes]='\0'
 			printf("num in line: %d\n",numbytes);
+      memset(recvingbuf,'\0',MAXIMUMDATA);
 		}
 		else {fclose(fp);break;}
 	}

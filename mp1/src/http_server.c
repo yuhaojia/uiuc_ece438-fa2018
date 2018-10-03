@@ -205,7 +205,7 @@ exit(0);
 			else{
 			memset(filebuff,'\0',MAXIMUMDATA);
 			  //send(new_fd,RESP_200,strlen(RESP_200),0);
-			  while(num_bytes=fread(filebuff, sizeof(char),5000,pfile)){
+			  while(num_bytes=fgets(filebuff, MAXIMUMDATA-1,pfile)!=NULL){
 			    //filebuff[strlen(filebuff)]='\0';
 			    send(new_fd,filebuff,strlen(filebuff),0);
 		            printf("numof bytes sent:%d\n",strlen(filebuff));
