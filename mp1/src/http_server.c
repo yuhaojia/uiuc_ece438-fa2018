@@ -17,15 +17,17 @@
 
 #define PORT "80"  // the port users will be connecting to
 
-#define MAXIMUMDATA 512
-#define MAXDATASIZE 1024
+#define MAXIMUMDATA 2980
+#define MAXDATASIZE 3000
 
 #define BACKLOG 10	 // how many pending connections queue will hold
 
 #define GET_S "GET /"
+#define HTTP_0 "HTTP/1.0"
+#define HTTP_1 "HTTP/1.1"
 #define RESP_200 "HTTP/1.1 200 OK\r\n\r\n"
-#define RESP_404 "HTTP/1.1 404 Not Found\r\n\r\n"
-#define RESP_400 "HTTP/1.1 400 Bad Request\r\n\r\n"
+#define RESP_404 "HTTP/1.1 404 Not Found\r\n\r\nError: 404\nWhoops, file not found!\n"
+#define RESP_400 "HTTP/1.1 400 Bad Request\r\n\r\nError: 400\nBad Request\n"
 #define TWO_CRLF "\r\n\r\n"
 
 void sigchld_handler(int s)
@@ -201,20 +203,21 @@ exit(0);
 
 
 			else{
-				fseek(pfile,0,SEEK_END);
-				int filelen = ftell(pfile);
-				fseek(pfile,0,SEEK_SET);
-				int readlen = 0;
+			fseek(pfile,0,SEEK_END);//located the END position
+        		int filelen=ftell(pfile);//got file length
+        		fseek(pfile,0,SEEK_SET);//return to the begging position
+        		int readlen=0;
 			memset(filebuff,'\0',MAXIMUMDATA);
 			  //send(new_fd,RESP_200,strlen(RESP_200),0);
-			  while((readlen=fread(filebuff, sizeof(char), MAXIMUMDATA,pfile))&&(filelen>0)){
+			  while((readlen=fread(filebuff,sizeof(char),MAXDATASIZE,pfile))&&(filelen>0)){
 			    //filebuff[strlen(filebuff)]='\0';
-			    send(new_fd,filebuff,readlen,0);
+			    //send(new_fd,filebuff,sizeof(filebuff),0);
+				send(new_fd,filebuff,readlen,0);
 		            printf("numof bytes sent:%d\n",strlen(filebuff));
-			    printf("%s\n",filebuff);
+			    //printf("%s\n",filebuff);
 				memset(filebuff,'\0',MAXIMUMDATA);
-				filelen = filelen - readlen;
-				usleep(1);
+filelen=filelen-readlen;
+usleep(1);
 			  }
 			  fclose(pfile);
 			  close(new_fd);

@@ -16,7 +16,7 @@
 
 #define PORT "80" // http only accepts ports 80
 
-#define MAXDATASIZE 1024 // max number of bytes we can get at once
+#define MAXDATASIZE 3000 // max number of bytes we can get at once
 
 // Error checking
 #define PREFIX_S "http://"
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
         port[0] = '8';
         port[1] = '0';
         port[2] = '\0';
-        //port[3] = '\0';
+        port[3] = '\0';
         printf("port");
         printf("%c\n",port[0]);
         printf("port");
@@ -226,19 +226,22 @@ int main(int argc, char *argv[])
     printf("client: connecting to %s\n", s);
 
     freeaddrinfo(servinfo); // all done with this structure
+	remove("output");
     FILE *fp;
-	fp=fopen("output","w");
-  memset(recvingbuf,'\0',MAXDATASIZE);
+	fp=fopen("output","a");
+memset(recvingbuf, '\0', MAXDATASIZE);
+printf("transfering");
     while(1){
+		//send(sockfd,(char*)wget_buf,sizeof(wget_buf),0);
 		if((numbytes=recv(sockfd,recvingbuf,MAXDATASIZE-1,0))>0){
-			fwrite(recvingbuf, 1, numbytes,fp);
-			printf("%s",recvingbuf);
-      recvingbuf[numbytes]='\0';
+			//fprintf(fp,"%s",recvingbuf);
+			fwrite(recvingbuf, 1, numbytes, fp);
+			//printf("%s",recvingbuf);
+			recvingbuf[numbytes]='\0';
 			printf("num in line: %d\n",numbytes);
-      memset(recvingbuf,'\0',MAXDATASIZE);
-      usleep(1000);
+memset(recvingbuf, '\0', MAXDATASIZE);
 		}
-		else {fclose(fp);break;}
+		else {printf("num in line notgood: %d\n",numbytes);fclose(fp);break;}
 	}
 	close(sockfd);
 
