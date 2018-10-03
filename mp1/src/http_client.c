@@ -221,6 +221,12 @@ int main(int argc, char *argv[])
     //printf("hhhhhh1\n");
     //send(sockfd,(char*)wget_buf,sizeof(wget_buf),0);
 
+    if(send(sockfd,(char*)wget_buf,sizeof(wget_buf),0)==-1){
+        perror("send");
+        close(sockfd);
+        exit(1);
+      }
+
     inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
               s, sizeof s);
     printf("client: connecting to %s\n", s);
@@ -229,11 +235,7 @@ int main(int argc, char *argv[])
     FILE *fp;
 	fp=fopen("output","w");
     while(1){
-      if(send(sockfd,(char*)wget_buf,sizeof(wget_buf),0)==-1){
-        perror("send");
-        close(sockfd);
-        exit(1);
-      }
+      
 
 		if((numbytes=recv(sockfd,recvingbuf,MAXDATASIZE-1,0))>0){
 			fprintf(fp,"%s",recvingbuf);
