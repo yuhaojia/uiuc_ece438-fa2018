@@ -6,8 +6,8 @@ COMPILERFLAGS = -g -Wall -Wextra -Wno-sign-compare
 
 #The components of each program. When you create a src/foo.c source file, add obj/foo.o here, separated
 #by a space (e.g. SOMEOBJECTS = obj/foo.o obj/bar.o obj/baz.o).
-SERVEROBJECTS = obj/http_server.o
-CLIENTOBJECTS = obj/http_client.o
+SERVEROBJECTS = obj/server.o
+CLIENTOBJECTS = obj/client.o
 TALKEROBJECTS = obj/talker.o
 LISTENEROBJECTS = obj/listener.o
 
@@ -22,12 +22,12 @@ LISTENEROBJECTS = obj/listener.o
 #The first rule in the Makefile is the default (the one chosen by plain `make`).
 #Since 'all' is first in this file, both `make all` and `make` do the same thing.
 #(`make obj server client talker listener` would also have the same effect).
-all : obj http_server http_client talker listener
+all : obj server client talker listener
 
 #$@: name of rule's target: server, client, talker, or listener, for the respective rules.
 #$^: the entire dependency string (after expansions); here, $(SERVEROBJECTS)
 #CC is a built in variable for the default C compiler; it usually defaults to "gcc". (CXX is g++).
-http_server: $(SERVEROBJECTS)
+server: $(SERVEROBJECTS)
 	$(CC) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
 
 
@@ -41,7 +41,7 @@ http_server: $(SERVEROBJECTS)
 #
 #In this case, CLIENTOBJECTS is just obj/client.o. So, if obj/client.o doesn't exist or is out of date, 
 #make will first look for a rule to build it. That rule is the 'obj/%.o' one, below; the % is a wildcard.
-http_client: $(CLIENTOBJECTS)
+client: $(CLIENTOBJECTS)
 	$(CC) $(COMPILERFLAGS) $^ -o $@ $(LINKLIBS)
 
 
