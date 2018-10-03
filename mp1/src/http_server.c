@@ -211,6 +211,7 @@ exit(0);
 		            printf("numof bytes sent:%d\n",strlen(filebuff));
 			    printf("%s\n",filebuff);
 				memset(filebuff,'\0',MAXIMUMDATA);
+				usleep(1);
 			  }
 			  fclose(pfile);
 			  close(new_fd);
