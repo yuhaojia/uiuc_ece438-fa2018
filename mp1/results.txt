@@ -6,7 +6,7 @@ test results:
 -25:  concurrency failed: one or more small files not retrieved
 ====================
 
-version:5
+version:6
 score: 50/100
 all-time best score (your current grade): 75/100
 
