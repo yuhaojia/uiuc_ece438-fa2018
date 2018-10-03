@@ -105,9 +105,9 @@ int main(int argc, char *argv[])
         //}
         pro =-1;
       }
-      if(pro == -1 && i+4 <strlen(argv[1])){
+      if(pro == -1 && i+1+portdigit <strlen(argv[1])){
 	
-        identifier[k] = argv[1][i+4];
+        identifier[k] = argv[1][i+1+portdigit];
         printf("identifier");
         printf("%c\n",identifier[k]);
         k++;
