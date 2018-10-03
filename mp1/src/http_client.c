@@ -233,6 +233,7 @@ int main(int argc, char *argv[])
 			fprintf(fp,"%s",recvingbuf);
 			printf("%s",recvingbuf);
 			printf("num in line: %d\n",numbytes);
+			usleep(1000);
 		}
 		else {fclose(fp);break;}
 	}
