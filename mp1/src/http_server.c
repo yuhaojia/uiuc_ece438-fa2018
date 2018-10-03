@@ -23,8 +23,6 @@
 #define BACKLOG 10	 // how many pending connections queue will hold
 
 #define GET_S "GET /"
-#define HTTP_0 "HTTP/1.0"
-#define HTTP_1 "HTTP/1.1"
 #define RESP_200 "HTTP/1.1 200 OK\r\n\r\n"
 #define RESP_404 "HTTP/1.1 404 Not Found\r\n\r\nError: 404\nWhoops, file not found!\n"
 #define RESP_400 "HTTP/1.1 400 Bad Request\r\n\r\nError: 400\nBad Request\n"
@@ -207,7 +205,7 @@ exit(0);
 			  //send(new_fd,RESP_200,strlen(RESP_200),0);
 			  while(num_bytes=fgets(filebuff, MAXIMUMDATA-1,pfile)!=NULL){
 			    //filebuff[strlen(filebuff)]='\0';
-			    send(new_fd,filebuff,strlen(filebuff),0);
+			    send(new_fd,filebuff,MAXIMUMDATA,0);
 		            printf("numof bytes sent:%d\n",strlen(filebuff));
 			    printf("%s\n",filebuff);
 				memset(filebuff,'\0',MAXIMUMDATA);
