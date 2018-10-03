@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
       numbytes =recv(sockfd, recvingbuf, MAXDATASIZE-1, 0);
       if (numbytes > 0){
         i = fwrite(recvingbuf, 1, numbytes, fp);
-        buf[numbytes] = '\0';
+        recvingbuf[numbytes] = '\0';
         //printf("%s",buf);
     }
   }while(numbytes > 0);
