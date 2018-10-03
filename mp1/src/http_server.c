@@ -133,7 +133,6 @@ int main(int argc,char*argv[])
 		if (!fork()) { // this is the child process
 			close(sockfd); // child doesn't need the listener
 			recvsize=recv(new_fd,serverbuff,MAXDATASIZE-1,0);
-			serverbuff[recvsize] = '\0';
 			printf("%s\n",serverbuff);
 
 			char buffbuff[1000];
@@ -184,16 +183,15 @@ int main(int argc,char*argv[])
 			printf("URL: %s\n",buffbuff);
 			printf("Hostname: %s\n",buffbuff2);
 			strcat(buffbuff2,buffbuff);
+			printf("all URL: %s\n",buffbuff2);
 
 			//But we only need URL as extracts;
 			int numsent;
 			char URLpath[100];
-			char line[500];
-			char filebuff[MAXDATASIZE];
 			strncpy(URLpath,buffbuff+1,strlen(buffbuff));
 			printf("%s\n",URLpath);
 			FILE*pfile=fopen(URLpath,"r");
-			//char filebuff[MAXIMUMDATA];
+			char filebuff[MAXIMUMDATA];
 			if(pfile==NULL){
 			  printf(RESP_404);
 			  send(new_fd,RESP_404,strlen(RESP_404),0);
@@ -205,25 +203,15 @@ exit(0);
 
 
 			else{
-			memset(filebuff,'\0',MAXDATASIZE);
-			//send(new_fd,RESP_200,strlen(RESP_200),0);
-			  fseek(pfile,0,SEEK_END);//located the END position
-        		int filelen=ftell(pfile);//got file length
-        		fseek(pfile,0,SEEK_SET);//return to the begging position
-        		int readlen=0;
-        	sleep(1);
-			  do{
-			  	readlen = fread(line,sizeof(char),MAXDATASIZE,pfile);
-
-			    //line[strlen(line)]='\0';
-			    if(readlen>0){
-			    	send(new_fd,filebuff,strlen(line),0);
-			    	filelen=filelen-readlen;
-			    	printf("numof bytes sent:%d\n",strlen(line));
-			    }
-			    memset(filebuff,'\0',MAXDATASIZE);
-		            
-			  }while((filelen>0)&&(readlen>0));
+			memset(filebuff,'\0',MAXIMUMDATA);
+			  //send(new_fd,RESP_200,strlen(RESP_200),0);
+			  while(num_bytes=fread(filebuff, sizeof(char),5000,pfile)){
+			    //filebuff[strlen(filebuff)]='\0';
+			    send(new_fd,filebuff,strlen(filebuff),0);
+		            printf("numof bytes sent:%d\n",strlen(filebuff));
+			    printf("%s\n",filebuff);
+				memset(filebuff,'\0',MAXIMUMDATA);
+			  }
 			  fclose(pfile);
 			  close(new_fd);
 			  exit(0);

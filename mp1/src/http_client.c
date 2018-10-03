@@ -219,7 +219,7 @@ int main(int argc, char *argv[])
         return 2;
     }
     //printf("hhhhhh1\n");
-    send(sockfd, wget_buf,sizeof(wget_buf),0);
+    send(sockfd,(char*)wget_buf,sizeof(wget_buf),0);
 
     inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
               s, sizeof s);
@@ -227,18 +227,8 @@ int main(int argc, char *argv[])
 
     freeaddrinfo(servinfo); // all done with this structure
     FILE *fp;
-	fp=fopen("output","a");
-  /*do{
-      numbytes =recv(sockfd, recvingbuf, MAXDATASIZE-1, 0);
-      if (numbytes > 0){
-        i = fwrite(recvingbuf, 1, numbytes, fp);
-        recvingbuf[numbytes] = '\0';
-        //printf("%s",buf);
-    }
-  }while(numbytes > 0);*/
+	fp=fopen("output","w");
     while(1){
-      
-
 		if((numbytes=recv(sockfd,recvingbuf,MAXDATASIZE-1,0))>0){
 			fprintf(fp,"%s",recvingbuf);
 			printf("%s",recvingbuf);
@@ -246,8 +236,6 @@ int main(int argc, char *argv[])
 		}
 		else {fclose(fp);break;}
 	}
-
-
 	close(sockfd);
 
     return 0;
