@@ -183,7 +183,6 @@ int main(int argc,char*argv[])
 			printf("URL: %s\n",buffbuff);
 			printf("Hostname: %s\n",buffbuff2);
 			strcat(buffbuff2,buffbuff);
-			printf("all URL: %s\n",buffbuff2);
 
 			//But we only need URL as extracts;
 			int numsent;
