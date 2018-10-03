@@ -203,7 +203,7 @@ exit(0);
 
 
 			else{
-			send(new_fd,RESP_200,strlen(RESP_200),0);
+			//send(new_fd,RESP_200,strlen(RESP_200),0);
 			  fseek(pfile,0,SEEK_END);//located the END position
         		int filelen=ftell(pfile);//got file length
         		fseek(pfile,0,SEEK_SET);//return to the begging position
