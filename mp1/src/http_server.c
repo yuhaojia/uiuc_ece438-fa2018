@@ -24,8 +24,8 @@
 
 #define GET_S "GET /"
 #define RESP_200 "HTTP/1.1 200 OK\r\n\r\n"
-#define RESP_404 "HTTP/1.1 404 Not Found\r\n\r\nError: 404\nWhoops, file not found!\n"
-#define RESP_400 "HTTP/1.1 400 Bad Request\r\n\r\nError: 400\nBad Request\n"
+#define RESP_404 "HTTP/1.1 404 Not Found\r\n\r\n"
+#define RESP_400 "HTTP/1.1 400 Bad Request\r\n\r\n"
 #define TWO_CRLF "\r\n\r\n"
 
 void sigchld_handler(int s)
