@@ -16,7 +16,7 @@
 
 #define PORT "80" // http only accepts ports 80
 
-#define MAXDATASIZE 3000 // max number of bytes we can get at once
+#define MAXDATASIZE 1024 // max number of bytes we can get at once
 
 // Error checking
 #define PREFIX_S "http://"

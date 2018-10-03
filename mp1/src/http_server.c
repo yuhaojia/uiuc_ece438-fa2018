@@ -17,8 +17,8 @@
 
 #define PORT "80"  // the port users will be connecting to
 
-#define MAXIMUMDATA 2980
-#define MAXDATASIZE 3000
+#define MAXIMUMDATA 512
+#define MAXDATASIZE 1024
 
 #define BACKLOG 10	 // how many pending connections queue will hold
 
