@@ -201,14 +201,19 @@ exit(0);
 
 
 			else{
+				fseek(pfile,0,SEEK_END);
+				int filelen = ftell(pfile);
+				fseek(pfile,0,SEEK_SET);
+				int readlen = 0;
 			memset(filebuff,'\0',MAXIMUMDATA);
 			  //send(new_fd,RESP_200,strlen(RESP_200),0);
-			  while(num_bytes=fgets(filebuff, MAXIMUMDATA-1,pfile)!=NULL){
+			  while((readlen=fread(filebuff, sizeof(char), MAXIMUMDATA,pfile))&&(filelen>0)){
 			    //filebuff[strlen(filebuff)]='\0';
-			    send(new_fd,filebuff,sizeof(filebuff),0);
+			    send(new_fd,filebuff,readlen,0);
 		            printf("numof bytes sent:%d\n",strlen(filebuff));
 			    printf("%s\n",filebuff);
 				memset(filebuff,'\0',MAXIMUMDATA);
+				filelen = filelen - readlen;
 				usleep(1);
 			  }
 			  fclose(pfile);
