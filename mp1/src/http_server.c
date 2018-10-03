@@ -190,7 +190,7 @@ int main(int argc,char*argv[])
 			char line[500];
 			strncpy(URLpath,buffbuff+1,strlen(buffbuff));
 			printf("%s\n",URLpath);
-			FILE*pfile=fopen(URLpath,"r");
+			FILE*pfile=fopen(URLpath,"rb");
 			//char filebuff[MAXIMUMDATA];
 			if(pfile==NULL){
 			  printf(RESP_404);
