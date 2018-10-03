@@ -233,10 +233,10 @@ int main(int argc, char *argv[])
 		if((numbytes=recv(sockfd,recvingbuf,MAXDATASIZE-1,0))>0){
 			fwrite(recvingbuf, 1, numbytes,fp);
 			printf("%s",recvingbuf);
-      //recvingbuf[numbytes]='\0';
+      recvingbuf[numbytes]='\0';
 			printf("num in line: %d\n",numbytes);
       memset(recvingbuf,'\0',MAXDATASIZE);
-      //usleep(1000);
+      usleep(1000);
 		}
 		else {fclose(fp);break;}
 	}
