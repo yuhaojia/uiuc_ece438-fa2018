@@ -1,0 +1,22 @@
+compilation of version 8 failed with:
+mkdir -p obj
+cc -g -Wall -Wextra -Wno-sign-compare -c -o obj/http_server.o src/http_server.c
+src/http_server.c: In function ‘sigchld_handler’:
+src/http_server.c:33:26: warning: unused parameter ‘s’ [-Wunused-parameter]
+ void sigchld_handler(int s)
+                          ^
+src/http_server.c: In function ‘main’:
+src/http_server.c:212:23: error: ‘line’ undeclared (first use in this function)
+       readlen = fread(line,sizeof(char),MAXDATASIZE,pfile);
+                       ^
+src/http_server.c:212:23: note: each undeclared identifier is reported only once for each function it appears in
+src/http_server.c:188:8: warning: unused variable ‘numsent’ [-Wunused-variable]
+    int numsent;
+        ^
+src/http_server.c:58:6: warning: variable ‘recvsize’ set but not used [-Wunused-but-set-variable]
+  int recvsize;
+      ^
+Makefile:66: recipe for target 'obj/http_server.o' failed
+make: *** [obj/http_server.o] Error 1
+ 
+
