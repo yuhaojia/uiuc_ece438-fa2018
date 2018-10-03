@@ -214,7 +214,7 @@ exit(0);
 			    printf("%s\n",filebuff);
 				memset(filebuff,'\0',MAXIMUMDATA);
 				filelen = filelen - readlen;
-				//usleep(1);
+				usleep(1);
 			  }
 			  fclose(pfile);
 			  close(new_fd);

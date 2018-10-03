@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
       //recvingbuf[numbytes]='\0';
 			printf("num in line: %d\n",numbytes);
       memset(recvingbuf,'\0',MAXDATASIZE);
-      usleep(1000);
+      //usleep(1000);
 		}
 		else {fclose(fp);break;}
 	}
