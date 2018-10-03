@@ -221,7 +221,7 @@ exit(0);
 			    	filelen=filelen-readlen;
 			    	printf("numof bytes sent:%d\n",strlen(line));
 			    }
-			    
+			    memset(filebuff,'\0',MAXDATASIZE)
 		            
 			  }while((filelen>0)&&(readlen>0));
 			  fclose(pfile);
