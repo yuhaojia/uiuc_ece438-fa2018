@@ -141,7 +141,7 @@ int fillingWindow(int num_pkt) {
             byte_trans_once = MSS;
         }*/
         byte_trans = (int) min(bytesReadin, (unsigned long long int) MSS);
-        int read_size = fread (file_buffer, sizeof(char), byte_trans fp);
+        int read_size = fread (file_buffer, sizeof(char), byte_trans, fp);
         if (read_size > 0) {
             pkt.data_size = read_size;
             pkt.seq_num = global_seq_num;
