@@ -287,6 +287,8 @@ void reliablyTransfer(char* hostname, unsigned short int hostUDPport, char* file
         printf("Could not open file to send.");
         exit(1);
     }
+
+    num_pkt_total = (unsigned long long int) ceil(bytesReadin * 1.0 / MSS);
     //num_pkt_total = (unsigned long long int) ceil(bytesToRead * 1.0 / MSS);
     //cout << num_pkt_total << endl;
 
