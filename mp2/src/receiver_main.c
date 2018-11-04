@@ -1,6 +1,6 @@
-/* 
+/*
  * File:   receiver_main.c
- * Author: 
+ * Author:
  *
  * Created on
  */
@@ -62,23 +62,10 @@ void diep(char *s) {
 }
 
 void manage(packet_t pkt){
-  if(pkt.seq_num == nextACK){// in order packet comes
-    int i;
-    for(i =0; i < pkt.data_size;i++){//load data into file buffer
-      file_buffer[bufferindex] = pkt.data[i];
-      bufferindex++;
-      if(bufferindex==MAXBUFSIZE){
-          // write to file
-          fwrite(file_buffer,sizeof(char),MAXBUFSIZE,fp);
-          bufferindex=0;
-      }
-    }
-    nextACK++;//
-///////////////////////////////////////////////////////////////////////////
-    while(receive_window[nextACK] != 0 ){//
-        receive_window[nextACK]=0;//
-        for(i=0;i<window_buffer[nextACK].data_size;i++){//
-            file_buffer[bufferindex] = window_buffer[nextACK].data[i];
+    if(pkt.seq_num == nextACK){// in order packet comes
+        int i;
+        for(i =0; i < pkt.data_size;i++){//load data into file buffer
+            file_buffer[bufferindex] = pkt.data[i];
             bufferindex++;
             if(bufferindex==MAXBUFSIZE){
                 // write to file
@@ -86,45 +73,59 @@ void manage(packet_t pkt){
                 bufferindex=0;
             }
         }
-    nextACK++;//
-  }// end for while loop for ......
-  //send ack
-  packet_t ack;
-  ack.msg_type=ACK;
-  ack.ack_num = nextACK;
-  ack.data_size = 0; // data size is 0 since we are sending ack
-  memcpy(buf,&ack,sizeof(packet_t));
-  sendto(s, buf, sizeof(packet_t), 0, (struct sockaddr *) &si_other,addr_len);
-  }// end if for in order packet comes
-  else if(pkt.seq_num > nextACK){ // out of order packet comes send dupack
-    printf("out of order! send dup ack %d",pkt.seq_num);
-    if (receive_window[pkt.seq_num]==0){//
-        receive_window[pkt.seq_num]=1;//
-        memcpy(&window_buffer[pkt.seq_num], &pkt, sizeof(packet_t));//
+        nextACK = (nextACK+1) % MAXSEQUENCE;
+        
+        ///////////////////////////////////////////////////////////////////////////
+        while(receive_window[nextACK % RWND] != 0 ){
+            receive_window[nextACK % RWND]=0;
+            for(i=0;i<window_buffer[nextACK % RWND].data_size;i++){
+                file_buffer[bufferindex] = window_buffer[nextACK % RWND].data[i];
+                bufferindex++;
+                if(bufferindex==MAXBUFSIZE){
+                    // write to file
+                    fwrite(file_buffer,sizeof(char),MAXBUFSIZE,fp);
+                    bufferindex=0;
+                }
+            }
+            nextACK=(nextACK+1) % MAXSEQUENCE;
+        }// end for while loop for ......
+        //send ack
+        packet_t ack;
+        ack.msg_type=ACK;
+        ack.ack_num = nextACK;
+        ack.data_size = 0; // data size is 0 since we are sending ack
+        memcpy(buf,&ack,sizeof(packet_t));
+        sendto(s, buf, sizeof(packet_t), 0, (struct sockaddr *) &si_other,addr_len);
+    }// end if for in order packet comes
+    else if(pkt.seq_num > nextACK){ //out of order packet comes send dupack
+        printf("out of order! send dup ack %d",pkt.seq_num);
+        if (receive_window[pkt.seq_num % RWND]==0){
+            receive_window[pkt.seq_num % RWND]=1;
+            memcpy(&window_buffer[pkt.seq_num % RWND], &pkt, sizeof(packet_t));
+        }
+        //send ack
+        packet_t ack;
+        ack.msg_type=ACK;
+        ack.ack_num = nextACK;
+        ack.data_size = 0; // data size is 0 since we are sending ack
+        memcpy(buf,&ack,sizeof(packet_t));
+        sendto(s, buf, sizeof(packet_t), 0, (struct sockaddr *) &si_other,addr_len);
+    }else{ // the missing packet comes
+        packet_t ack;
+        ack.msg_type=ACK;
+        ack.ack_num = nextACK;
+        ack.data_size = 0; // data size is 0 since we are sending ack
+        memcpy(buf,&ack,sizeof(packet_t));
+        //send ack
+        sendto(s, buf, sizeof(packet_t), 0, (struct sockaddr *) &si_other,addr_len);
     }
-    //send ack
-    packet_t ack;
-    ack.msg_type=ACK;
-    ack.ack_num = nextACK;
-    ack.data_size = 0; // data size is 0 since we are sending ack
-    memcpy(buf,&ack,sizeof(packet_t));
-    sendto(s, buf, sizeof(packet_t), 0, (struct sockaddr *) &si_other,addr_len);
-  }else{ // the missing packet comes
-    packet_t ack;
-    ack.msg_type=ACK;
-    ack.ack_num = nextACK;
-    ack.data_size = 0; // data size is 0 since we are sending ack
-    memcpy(buf,&ack,sizeof(packet_t));
-    //send ack
-    sendto(s, buf, sizeof(packet_t), 0, (struct sockaddr *) &si_other,addr_len);
-  }
-  return;
+    return;
 }
 
 
 
 void reliablyReceive(unsigned short int myUDPport, char* destinationFile) {
-// open up a socket
+    // open up a socket
     slen = sizeof (si_other);
     if ((s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
         diep("socket");
@@ -135,22 +136,22 @@ void reliablyReceive(unsigned short int myUDPport, char* destinationFile) {
     printf("Now binding\n");
     if (bind(s, (struct sockaddr*) &si_me, sizeof (si_me)) == -1)
         diep("bind");
-
-//prepare destination file
+    
+    //prepare destination file
     fp = fopen(destinationFile,"wb");
     // open file for read and write
     if(fp == NULL){
-      diep("file open");
-      return;
+        diep("file open");
+        return;
     }
-
-//receive packets
+    
+    //receive packets
     int numbytes = 0;
     addr_len = sizeof si_other;
     while(1){
         if((numbytes = recvfrom(s,buf,sizeof(packet_t),0,(struct sockaddr *) &si_other,&addr_len))==-1){
-          diep("receive data");
-          exit(2);
+            diep("receive data");
+            exit(2);
         }
         packet_t pkt;
         memcpy(&pkt,buf,sizeof(packet_t));
@@ -159,8 +160,8 @@ void reliablyReceive(unsigned short int myUDPport, char* destinationFile) {
             manage(pkt);
             continue;
         }else if(pkt.msg_type == FIN){//receive last signal, send lastask close the socket
-              fwrite(file_buffer,sizeof(char),bufferindex,fp);
-              while(1){
+            fwrite(file_buffer,sizeof(char),bufferindex,fp);
+            while(1){
                 packet_t pkt;
                 pkt.msg_type = FIN_ACK;
                 pkt.data_size=0;
@@ -170,32 +171,31 @@ void reliablyReceive(unsigned short int myUDPport, char* destinationFile) {
                     exit(2);
                 }
                 break;
-              }
-              break;
+            }
+            break;
         }//receive signal for final packet sent
-
+        
     }//end of big while
-
-  close(s);
-  fclose(fp);
+    
+    close(s);
+    fclose(fp);
     printf("%s received.", destinationFile);
-  return;
+    return;
 }
 
 /*
- * 
+ *
  */
 int main(int argc, char** argv) {
-
+    
     unsigned short int udpPort;
-
+    
     if (argc != 3) {
         fprintf(stderr, "usage: %s UDP_port filename_to_write\n\n", argv[0]);
         exit(1);
     }
-
+    
     udpPort = (unsigned short int) atoi(argv[1]);
-
+    
     reliablyReceive(udpPort, argv[2]);
 }
-
