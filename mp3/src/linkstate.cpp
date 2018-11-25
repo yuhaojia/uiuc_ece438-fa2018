@@ -21,14 +21,14 @@ void MessageProc(string line, int &src, int &dst, string &msg){
     msg = line.substr(mes2+1,mes3 - mes2 - 1);
 }
 
-int TieBreak(unordered_map<int,Node>& Q,unordered_map<int,int>& dist){
+int TieBreak(unordered_map<int,Node>& Qmap,unordered_map<int,int>& dist){
     int result = -1;
-    int MinDist = 999999999;
+    int MinDist = BIGINTNUM;
     for ( auto it = dist.begin(); it != dist.end(); ++it ){
-        if(it->second < MinDist && Q.find(it->first) != Q.end()){
+        if(it->second < MinDist && Qmap.find(it->first) != Qmap.end()){
             result = it->first;
             MinDist = it->second;
-        }else if (it->second == MinDist && Q.find(it->first) != Q.end()){
+        }else if (it->second == MinDist && Qmap.find(it->first) != Qmap.end()){
             if (result > it->first){
                 result = it->first;
             }
@@ -41,22 +41,22 @@ void Dijkstra(Graph g, int src, unordered_map<int,int> & dist, unordered_map<int
     if(dist.size() != 0 || prev.size() != 0){
         return;
     }
-    unordered_map<int,Node> Q;
+    unordered_map<int,Node> Qmap;
     //Initialization
     for ( auto it = g.Nodes.begin(); it != g.Nodes.end(); ++it ){ //
-        dist[it->first] = 999999999;
+        dist[it->first] = BIGINTNUM;
         prev[it->first] = UNDEFINED;
-        Q.insert(make_pair(it->first,it->second));
+        Qmap.insert(make_pair(it->first,it->second));
     }
     
     dist[src] = 0;
-    while(Q.size()!= 0){
-        int IDTB = TieBreak(Q,dist);
+    while(Qmap.size()!= 0){
+        int IDTB = TieBreak(Qmap,dist);
         if(IDTB == -1){
             break;
         }
-        Node u = Q[IDTB];
-        Q.erase(IDTB);
+        Node u = Qmap[IDTB];
+        Qmap.erase(IDTB);
         for(int i = 0; i < u.Edges.size(); i++){
             Edge e = u.Edges[i];
             int vID;
@@ -66,7 +66,7 @@ void Dijkstra(Graph g, int src, unordered_map<int,int> & dist, unordered_map<int
             else {
                 vID = e.left;
             }
-            if (Q.find(vID) == Q.end())
+            if (Qmap.find(vID) == Qmap.end())
                 continue;
             int alt = dist[IDTB] + e.weight;
             if (alt < dist[vID] && IDTB != UNDEFINED && vID != UNDEFINED){
@@ -93,7 +93,7 @@ void OutTopology(Graph g, int src,unordered_map<int,int> & dist, unordered_map<i
             dst++;
             continue;
         }
-        if(dist[dst] == 999999999){
+        if(dist[dst] == BIGINTNUM){
             dst++;
             continue;
         }
@@ -195,7 +195,7 @@ int main(int argc, char** argv) {
         string msg = "";
         MessageProc(line, src, dst, msg);
 
-        if(CostTable[src][dst] == 999999999){
+        if(CostTable[src][dst] == BIGINTNUM){
             outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             continue;
@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
             int src,dst;
             string msg = "";
             MessageProc(line, src, dst, msg);
-            if(CostTable[src][dst] == 999999999){
+            if(CostTable[src][dst] == BIGINTNUM){
                 outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 continue;

@@ -37,9 +37,9 @@ void BellmanFord(Graph g, int src, unordered_map<int,int> & dist, unordered_map<
     if(dist.size() != 0 || prev.size() != 0){
         return;
     }
-    //Initialization
+    
     for ( auto it = g.Nodes.begin(); it != g.Nodes.end(); ++it ){ //
-        dist[it->first] = 999999999;
+        dist[it->first] = BIGINTNUM;
         prev[it->first] = UNDEFINED;
     }
     
@@ -86,7 +86,7 @@ void OutTopology(Graph g, int src,unordered_map<int,int> & dist, unordered_map<i
             dst++;
             continue;
         }
-        if(dist[dst] == 999999999){
+        if(dist[dst] == BIGINTNUM){
             dst++;
             continue;
         }
@@ -191,7 +191,7 @@ int main(int argc, char** argv) {
         string msg = "";
         MessageProc(line, src, dst, msg);
 
-        if(CostTable[src][dst] == 999999999){
+        if(CostTable[src][dst] == BIGINTNUM){
             outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             continue;
@@ -246,7 +246,7 @@ int main(int argc, char** argv) {
             int src,dst;
             string msg = "";
             MessageProc(line, src, dst, msg);
-            if(CostTable[src][dst] == 999999999){
+            if(CostTable[src][dst] == BIGINTNUM){
                 outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 continue;

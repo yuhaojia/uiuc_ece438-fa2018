@@ -81,20 +81,24 @@ class Node {
             return 1;
         }
 
+        void EraseNode(int i){
+            vector<Edge> tmp_vec;
+            for(int j = 0 ; j < Edges.size(); j++){
+                if(j != i){
+                    tmp_vec.push_back(Edges[j]);
+                }
+            }
+            Edges.clear();
+            for(int j = 0; j < tmp_vec.size(); j++){
+                Edges.push_back(tmp_vec[j]);
+            }
+        }
+
         int UpdateEdge(Edge e){
             for(int i = 0; i<Edges.size(); i++){
                 if(Edges[i].left == e.left && Edges[i].right == e.right){
                     if(e.weight <0){
-                        vector<Edge> tmp_vec;
-                        for(int j = 0 ; j < Edges.size(); j++){
-                            if(j != i){
-                                tmp_vec.push_back(Edges[j]);
-                            }
-                        }
-                        Edges.clear();
-                        for(int j = 0; j < tmp_vec.size(); j++){
-                            Edges.push_back(tmp_vec[j]);
-                        }
+                        EraseNode(i);
                         //Edges.erase(Edges.begin() + i);
                         return 1;
                     }else{
@@ -112,40 +116,19 @@ class Node {
 
 
 class Graph {
-public:
-    unordered_map<int, Node> Nodes;
-    vector<Edge> Edges;
-    int MaxNodeID;
-    
-    Graph(){
-        Nodes.clear();
-        Edges.clear();
-        MaxNodeID = UNDEFINED;
-    }
-    
-    void UpdateGraph(Edge deltaEdge){
-        bool flagNode = false;
-        if (Nodes.find(deltaEdge.left) != Nodes.end())
-            flagNode = true;
-        if(deltaEdge.left == deltaEdge.right && !flagNode){
-            //actually node and doesn't have it.
-            Node n(deltaEdge.left);
-            Nodes.insert(make_pair(deltaEdge.left,n));
-            return;
-        }
+    public:
+        unordered_map<int, Node> Nodes;
+        vector<Edge> Edges;
+        int MaxNodeID;
         
-        Node tmp1 = Nodes[deltaEdge.left];
-        Node tmp2 = Nodes[deltaEdge.right];
-        tmp1.UpdateEdge(deltaEdge);
-        tmp2.UpdateEdge(deltaEdge);
-        Nodes.erase(deltaEdge.left);
-        Nodes.erase(deltaEdge.right);
-        Nodes.insert(make_pair(deltaEdge.left,tmp1));
-        Nodes.insert(make_pair(deltaEdge.right,tmp2));
+        Graph(){
+            Nodes.clear();
+            Edges.clear();
+            MaxNodeID = UNDEFINED;
+        }
 
-        for(int i = 0; i < Edges.size(); i++){
-            if(Edges[i].left == deltaEdge.left && Edges[i].right == deltaEdge.right && deltaEdge.weight == BIGUNDEFINED){
-                vector<Edge> tmp_vec;
+        void EraseNode(int i){
+            vector<Edge> tmp_vec;
                 for(int j = 0 ; j < Edges.size(); j++){
                     if(j != i){
                         tmp_vec.push_back(Edges[j]);
@@ -155,16 +138,40 @@ public:
                 for(int j = 0; j < tmp_vec.size(); j++){
                     Edges.push_back(tmp_vec[j]);
                 }
-                //Edges.erase(Edges.begin()+i);
-                return;
-            }else if (Edges[i].left == deltaEdge.left && Edges[i].right == deltaEdge.right){
-                Edges[i].weight = deltaEdge.weight;
+        }
+        
+        void UpdateGraph(Edge EdgetoUpdate){
+            bool flagNode = false;
+            if (Nodes.find(EdgetoUpdate.left) != Nodes.end())
+                flagNode = true;
+            if(EdgetoUpdate.left == EdgetoUpdate.right && !flagNode){
+                Node n(EdgetoUpdate.left);
+                Nodes.insert(make_pair(EdgetoUpdate.left,n));
                 return;
             }
+            
+            Node tmp1 = Nodes[EdgetoUpdate.left];
+            Node tmp2 = Nodes[EdgetoUpdate.right];
+            tmp1.UpdateEdge(EdgetoUpdate);
+            tmp2.UpdateEdge(EdgetoUpdate);
+            Nodes.erase(EdgetoUpdate.left);
+            Nodes.erase(EdgetoUpdate.right);
+            Nodes.insert(make_pair(EdgetoUpdate.left,tmp1));
+            Nodes.insert(make_pair(EdgetoUpdate.right,tmp2));
+
+            for(int i = 0; i < Edges.size(); i++){
+                if(Edges[i].left == EdgetoUpdate.left && Edges[i].right == EdgetoUpdate.right && EdgetoUpdate.weight == BIGUNDEFINED){
+                    EraseNode(i);
+                    //Edges.erase(Edges.begin()+i);
+                    return;
+                }else if (Edges[i].left == EdgetoUpdate.left && Edges[i].right == EdgetoUpdate.right){
+                    Edges[i].weight = EdgetoUpdate.weight;
+                    return;
+                }
+            }
+            Edges.push_back(EdgetoUpdate);
+            return;
         }
-        Edges.push_back(deltaEdge);
-        return;
-    }
 };
 
 
