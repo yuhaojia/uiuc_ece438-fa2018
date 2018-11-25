@@ -20,7 +20,7 @@ test results:
 -5:  DV: 8 node topology failed
 ====================
 
-version:8
+version:9
 score: 80/100
 all-time best score (your current grade): 80/100
 
