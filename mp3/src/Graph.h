@@ -85,6 +85,17 @@ class Node {
             for(int i = 0; i<Edges.size(); i++){
                 if(Edges[i].left == e.left && Edges[i].right == e.right){
                     if(e.weight <0){
+                        /*
+                        vector<Edge> tmp_vec;
+                        for(int j = 0 ; j < Edges.size(); j++){
+                            if(j != i){
+                                tmp_vec.push_back(Edges[j]);
+                            }
+                        }
+                        Edges.clear();
+                        for(int j = 0; j < tmp_vec.size(); j++){
+                            Edges.push_back(tmp_vec[j]);
+                        }*/
                         Edges.erase(Edges.begin() + i);
                         return 1;
                     }else{
@@ -124,6 +135,8 @@ public:
             return;
         }
         
+        //Nodes[deltaEdge.left] = Nodes[deltaEdge.left].UpdateEdge(deltaEdge);
+        //Nodes[deltaEdge.right] = Nodes[deltaEdge.right].UpdateEdge(deltaEdge);
         Node tmp1 = Nodes[deltaEdge.left];
         Node tmp2 = Nodes[deltaEdge.right];
         tmp1.UpdateEdge(deltaEdge);
@@ -135,6 +148,16 @@ public:
 
         for(int i = 0; i < Edges.size(); i++){
             if(Edges[i].left == deltaEdge.left && Edges[i].right == deltaEdge.right && deltaEdge.weight == BIGUNDEFINED){
+                /*vector<Edge> tmp_vec;
+                for(int j = 0 ; j < Edges.size(); j++){
+                    if(j != i){
+                        tmp_vec.push_back(Edges[j]);
+                    }
+                }
+                Edges.clear();
+                for(int j = 0; j < tmp_vec.size(); j++){
+                    Edges.push_back(tmp_vec[j]);
+                }*/
                 Edges.erase(Edges.begin()+i);
                 return;
             }else if (Edges[i].left == deltaEdge.left && Edges[i].right == deltaEdge.right){
