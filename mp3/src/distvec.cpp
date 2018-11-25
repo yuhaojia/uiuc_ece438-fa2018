@@ -8,29 +8,29 @@ using namespace std;
 
 unordered_map<int, unordered_map<int, int>> CostTable;
 unordered_map<int, unordered_map<int, int>> ForwardTable;
-string outfile = "output.txt";
-ofstream outfilestream(outfile, ios_base::app);
+//string outfile = "output.txt";
+//ofstream outfilestream(outfile, ios_base::app);
 
 void MessageProc(string line, int &src, int &dst, string &msg){
-    size_t pos0, pos1, pos2;
-    pos0 = line.find_first_of(" ");
-    pos1 = line.find_first_of(" ", pos0+1);
-    pos2 = line.length();
-    src = stoi(line.substr(0,pos0 - 0));
-    dst = stoi(line.substr(pos0+1,pos1 - pos0 - 1));
-    msg = line.substr(pos1+1,pos2 - pos1 - 1);
+    size_t mes1, mes2, mes3;
+    mes1 = line.find_first_of(" ");
+    mes2 = line.find_first_of(" ", mes1+1);
+    mes3 = line.length();
+    src = stoi(line.substr(0,mes1 - 0));
+    dst = stoi(line.substr(mes1+1,mes2 - mes1 - 1));
+    msg = line.substr(mes2+1,mes3 - mes2 - 1);
 }
 
 int TieBreak(int src, int dst, unordered_map<int,int> & prev){
-    int tmp = dst;
-    int ret = UNDEFINED;
-    while(tmp != src){
-        if(tmp == UNDEFINED)
-            return UNDEFINED;
-        ret = tmp;
-        tmp = prev[tmp];
+    int temp = dst;
+    int result = UNDEFINED;
+    while(temp != src){
+        if(temp == UNDEFINED)
+            return temp;
+        result = temp;
+        temp = prev[temp];
     }
-    return ret;
+    return result;
 }
 
 void BellmanFord(Graph g, int src, unordered_map<int,int> & dist, unordered_map<int,int> & prev){
@@ -74,8 +74,8 @@ void BellmanFord(Graph g, int src, unordered_map<int,int> & dist, unordered_map<
 }
 
 void OutTopology(Graph g, int src,unordered_map<int,int> & dist, unordered_map<int,int> & prev){
-    //ofstream outfile;
-    //outfile.open("output.txt", ios_base::app);
+    ofstream outfile;
+    outfile.open("output.txt", ios_base::app);
     vector<int> stack;
     int dst = 0;
     while(dst <= g.MaxNodeID){
@@ -98,17 +98,17 @@ void OutTopology(Graph g, int src,unordered_map<int,int> & dist, unordered_map<i
             tmp = prev[tmp];
         }
         if(stack.size()==1){
-            outfilestream<<dst<<" "<<stack[0]<<" "<<dist[dst]<<endl;
+            outfile<<dst<<" "<<stack[0]<<" "<<dist[dst]<<endl;
             cout<<dst<<" "<<stack[0]<<" "<<dist[dst]<<endl;
         }else{
-            outfilestream<<dst<<" "<<stack[stack.size()-2]<<" "<<dist[dst]<<endl;
+            outfile<<dst<<" "<<stack[stack.size()-2]<<" "<<dist[dst]<<endl;
             cout<<dst<<" "<<stack[stack.size()-2]<<" "<<dist[dst]<<endl;
         }
         dst++;
     }
-    outfilestream<<endl;
+    outfile<<endl;
     cout<<endl;
-    //outfile.close();
+    outfile.close();
 }
     
 
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
     string topofile(argv[1]);
     string messagefile(argv[2]);
     string changesfile(argv[3]);
-    //string outfile = "output.txt";
+    string outfile = "output.txt";
     
     Graph g;
     ifstream infile(topofile);
@@ -164,8 +164,6 @@ int main(int argc, char** argv) {
             g.MaxNodeID = it->first;
     }
 
-
-    //solver.DistanceVector(g);
     CostTable.clear();
     ForwardTable.clear();
     for(int i = 0; i <= g.MaxNodeID; i++){
@@ -183,11 +181,8 @@ int main(int argc, char** argv) {
         ForwardTable.insert(make_pair(src,prev));
     }
 
-
-
-    //solver.OutputMessage(outfile, messagefile);
-    //ofstream outfilestream;
-    //outfilestream.open(outfile, ios_base::app);
+    ofstream outfilestream;
+    outfilestream.open(outfile, ios_base::app);
     ifstream mfile(messagefile);
     string line;
     while(getline(mfile,line)){
@@ -217,7 +212,7 @@ int main(int argc, char** argv) {
         outfilestream<<"message "<<msg<<endl;
         cout<<"message "<<msg<<endl;
     }
-    //outfilestream.close();
+    outfilestream.close();
 
 
     ifstream cfile(changesfile);
@@ -225,7 +220,6 @@ int main(int argc, char** argv) {
     while(cfile>>s>>d>>w){
         g.UpdateGraph(Edge(s,d,w));
 
-        //solver.DistanceVector(g);
         CostTable.clear();
         ForwardTable.clear();
         for(int i = 0; i <= g.MaxNodeID; i++){
@@ -243,10 +237,9 @@ int main(int argc, char** argv) {
             ForwardTable.insert(make_pair(src,prev));
         }
 
-        //solver.OutputMessage(outfile, messagefile);
-        //ofstream outfilestream;
-        //outfilestream.open(outfile, ios_base::app);
-        //ifstream mfile(messagefile);
+        ofstream outfilestream;
+        outfilestream.open(outfile, ios_base::app);
+        ifstream mfile(messagefile);
         string line;
         while(getline(mfile,line)){
             //TODO:
@@ -263,10 +256,7 @@ int main(int argc, char** argv) {
             }
             vector<int> stack;
             int tmp = dst;
-            //stack.push_back(dst);
             while(tmp != src){
-                //if(tmp == UNDEFINED)
-                //    return;
                 stack.push_back(ForwardTable[src][tmp]);
                 tmp = ForwardTable[src][tmp];
             }
@@ -277,10 +267,10 @@ int main(int argc, char** argv) {
             outfilestream<<"message "<<msg<<endl;
             cout<<"message "<<msg<<endl;
         }
-        //outfilestream.close();
+        outfilestream.close();
 
 
     }
-    outfilestream.close();
+    
     return 0;
 }
