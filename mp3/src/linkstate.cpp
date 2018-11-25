@@ -8,58 +8,59 @@ using namespace std;
 
 unordered_map<int, unordered_map<int, int>> CostTable;
 unordered_map<int, unordered_map<int, int>> ForwardTable;
+string outfile = "output.txt";
+ofstream outfilestream(outfile, ios_base::app);
 
-void ProcessMessage(string line, int &src, int &dst, string &msg){
-    size_t pos0, pos1, pos2;
-    pos0 = line.find_first_of(" ");
-    pos1 = line.find_first_of(" ", pos0+1);
-    pos2 = line.length();
-    src = stoi(line.substr(0,pos0 - 0));
-    dst = stoi(line.substr(pos0+1,pos1 - pos0 - 1));
-    msg = line.substr(pos1+1,pos2 - pos1 - 1);
+void MessageProc(string line, int &src, int &dst, string &msg){
+    size_t mes1, mes2, mes3;
+    mes1 = line.find_first_of(" ");
+    mes2 = line.find_first_of(" ", mes1+1);
+    mes3 = line.length();
+    src = stoi(line.substr(0,mes1 - 0));
+    dst = stoi(line.substr(mes1+1,mes2 - mes1 - 1));
+    msg = line.substr(mes2+1,mes3 - mes2 - 1);
 }
 
-int GetMinDistID(unordered_map<int,Node>& Q,unordered_map<int,int>& dist){
-    int MinDistValue = 999999999;
-    int ret = -1;
+int TieBreak(unordered_map<int,Node>& Q,unordered_map<int,int>& dist){
+    int result = -1;
+    int MinDist = BIGINTNUM;
     for ( auto it = dist.begin(); it != dist.end(); ++it ){
-        if(it->second < MinDistValue && Q.find(it->first) != Q.end()){
-            ret = it->first;
-            MinDistValue = it->second;
-        }else if (it->second == MinDistValue && Q.find(it->first) != Q.end()){  //Tie Break 2 or 3?;
-            if (ret > it->first){
-                ret = it->first;
+        if(it->second < MinDist && Q.find(it->first) != Q.end()){
+            result = it->first;
+            MinDist = it->second;
+        }else if (it->second == MinDist && Q.find(it->first) != Q.end()){
+            if (result > it->first){
+                result = it->first;
             }
         }
     }
-    return ret;
+    return result;
 }
 
 void Dijkstra(Graph g, int src, unordered_map<int,int> & dist, unordered_map<int,int> & prev){
     if(dist.size() != 0 || prev.size() != 0){
-        //cout<<"Error(Dijkstra):Invalid input"<<endl;
         return;
     }
     unordered_map<int,Node> Q;
     //Initialization
     for ( auto it = g.Nodes.begin(); it != g.Nodes.end(); ++it ){ //
-        dist[it->first] = 999999999;
+        dist[it->first] = BIGINTNUM;
         prev[it->first] = UNDEFINED;
         Q.insert(make_pair(it->first,it->second));
     }
     
     dist[src] = 0;
     while(Q.size()!= 0){
-        int uID = GetMinDistID(Q,dist);
-        if(uID == -1){
+        int IDTB = TieBreak(Q,dist);
+        if(IDTB == -1){
             break;
         }
-        Node u = Q[uID];
-        Q.erase(uID);
+        Node u = Q[IDTB];
+        Q.erase(IDTB);
         for(int i = 0; i < u.Edges.size(); i++){
             Edge e = u.Edges[i];
             int vID;
-            if (e.left == uID){
+            if (e.left == IDTB){
                 vID = e.right;
             }
             else {
@@ -67,12 +68,12 @@ void Dijkstra(Graph g, int src, unordered_map<int,int> & dist, unordered_map<int
             }
             if (Q.find(vID) == Q.end())
                 continue;
-            int alt = dist[uID] + e.weight;
-            if (alt < dist[vID] && uID != UNDEFINED && vID != UNDEFINED){
+            int alt = dist[IDTB] + e.weight;
+            if (alt < dist[vID] && IDTB != UNDEFINED && vID != UNDEFINED){
                 dist[vID] = alt;
-                prev[vID] = uID;
-            }else if (alt == dist[vID] && uID < prev[vID] && uID != UNDEFINED && vID != UNDEFINED){
-                prev[vID] = uID;
+                prev[vID] = IDTB;
+            }else if (alt == dist[vID] && IDTB < prev[vID] && IDTB != UNDEFINED && vID != UNDEFINED){
+                prev[vID] = IDTB;
             }
         }
     }
@@ -80,18 +81,17 @@ void Dijkstra(Graph g, int src, unordered_map<int,int> & dist, unordered_map<int
 }
 
 void OutTopology(Graph g, int src,unordered_map<int,int> & dist, unordered_map<int,int> & prev){
-    ofstream outfile;
-    outfile.open("output.txt", ios_base::app);
-    outfile<<endl;
-    cout<<endl;
     vector<int> stack;
     int dst = 0;
     while(dst <= g.MaxNodeID){
-        if(!g.HasNode(dst)){
+        bool flagdst = false;
+        if (g.Nodes.find(dst) != g.Nodes.end())
+            flagdst = true;
+        if(!flagdst){
             dst++;
             continue;
         }
-        if(dist[dst] == 999999999){
+        if(dist[dst] == BIGINTNUM){
             dst++;
             continue;
         }
@@ -103,35 +103,32 @@ void OutTopology(Graph g, int src,unordered_map<int,int> & dist, unordered_map<i
             tmp = prev[tmp];
         }
         if(stack.size()==1){
-            outfile<<dst<<" "<<stack[0]<<" "<<dist[dst]<<endl;
+            outfilestream<<dst<<" "<<stack[0]<<" "<<dist[dst]<<endl;
             cout<<dst<<" "<<stack[0]<<" "<<dist[dst]<<endl;
         }else{
-            outfile<<dst<<" "<<stack[stack.size()-2]<<" "<<dist[dst]<<endl;
+            outfilestream<<dst<<" "<<stack[stack.size()-2]<<" "<<dist[dst]<<endl;
             cout<<dst<<" "<<stack[stack.size()-2]<<" "<<dist[dst]<<endl;
         }
         dst++;
     }
-    outfile<<endl;
+    outfilestream<<endl;
     cout<<endl;
-    outfile.close();
 }
     
 
 int main(int argc, char** argv) {
-    //printf("Number of arguments: %d", argc);
     if (argc != 4) {
         printf("Usage: ./distvec topofile messagefile changesfile\n");
         return -1;
     }
-    string graphfile(argv[1]);
+    string topofile(argv[1]);
     string messagefile(argv[2]);
     string changesfile(argv[3]);
-    string outfile = "output.txt";
     
     Graph g;
-    ifstream infile(graphfile);
+    ifstream infile(topofile);
     int ss, dd, ww;
-    while (infile >> ss >> dd>> ww)
+    while (infile >> ss >> dd >> ww)
     {   
         Edge e(ss,dd,ww);
         bool flags = false;
@@ -169,8 +166,6 @@ int main(int argc, char** argv) {
             g.MaxNodeID = it->first;
     }
 
-
-    //solver.LinkState(g);
     CostTable.clear();
     ForwardTable.clear();
     for(int i = 0; i <= g.MaxNodeID; i++){
@@ -183,25 +178,18 @@ int main(int argc, char** argv) {
         unordered_map<int,int> dist,prev;
         Dijkstra(g,src,dist,prev);
         OutTopology(g, src, dist, prev);
-
         CostTable.insert(make_pair(src, dist));
         ForwardTable.insert(make_pair(src,prev));
     }
 
-
-
-    //solver.OutputMessage(outfile, messagefile);
-    ofstream outfilestream;
-    outfilestream.open(outfile, ios_base::app);
     ifstream mfile(messagefile);
     string line;
     while(getline(mfile,line)){
-        //TODO:
         int src,dst;
         string msg = "";
-        ProcessMessage(line, src, dst, msg);
+        MessageProc(line, src, dst, msg);
 
-        if(CostTable[src][dst] == 999999999){
+        if(CostTable[src][dst] == BIGINTNUM){
             outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             continue;
@@ -211,10 +199,7 @@ int main(int argc, char** argv) {
         }
         vector<int> stack;
         int tmp = dst;
-        //stack.push_back(dst);
         while(tmp != src){
-            //if(tmp == UNDEFINED)
-            //    return;
             stack.push_back(ForwardTable[src][tmp]);
             tmp = ForwardTable[src][tmp];
         }
@@ -225,22 +210,19 @@ int main(int argc, char** argv) {
         outfilestream<<"message "<<msg<<endl;
         cout<<"message "<<msg<<endl;
     }
-    outfilestream.close();
-
-
-
-
 
     ifstream cfile(changesfile);
     int s,d,w;
     while(cfile>>s>>d>>w){
         g.UpdateGraph(Edge(s,d,w));
 
-        //solver.LinkState(g);
         CostTable.clear();
         ForwardTable.clear();
         for(int i = 0; i <= g.MaxNodeID; i++){
-            if(!g.HasNode(i))
+            bool flagi = false;
+            if (g.Nodes.find(i) != g.Nodes.end())
+                flagi = true;
+            if(!flagi)
                 continue;
             int src = i;
             unordered_map<int,int> dist,prev;
@@ -251,20 +233,12 @@ int main(int argc, char** argv) {
             ForwardTable.insert(make_pair(src,prev));
         }
 
-
-
-
-        //solver.OutputMessage(outfile, messagefile);
-        ofstream outfilestream;
-        outfilestream.open(outfile, ios_base::app);
-        ifstream mfile(messagefile);
         string line;
         while(getline(mfile,line)){
-            //TODO:
             int src,dst;
             string msg = "";
-            ProcessMessage(line, src, dst, msg);
-            if(CostTable[src][dst] == 999999999){
+            MessageProc(line, src, dst, msg);
+            if(CostTable[src][dst] == BIGINTNUM){
                 outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 continue;
@@ -274,10 +248,7 @@ int main(int argc, char** argv) {
             }
             vector<int> stack;
             int tmp = dst;
-            //stack.push_back(dst);
             while(tmp != src){
-                //if(tmp == UNDEFINED)
-                //    return;
                 stack.push_back(ForwardTable[src][tmp]);
                 tmp = ForwardTable[src][tmp];
             }
@@ -288,10 +259,8 @@ int main(int argc, char** argv) {
             outfilestream<<"message "<<msg<<endl;
             cout<<"message "<<msg<<endl;
         }
-        outfilestream.close();
-
 
     }
-
+    outfilestream.close();
     return 0;
 }
