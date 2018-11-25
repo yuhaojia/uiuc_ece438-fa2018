@@ -6,22 +6,22 @@ test results:
  Link addition succeeded!
  Topology in MP instructions succeeded!
  Changes to topology in MP instructions succeeded!
--5:  Changes to topology in MP instructions, 1 path unreachable failed
+ Changes to topology in MP instructions, 1 path unreachable succeeded!
  Multiple changes to topology in MP instructions succeeded!
--5:  8 node topology failed
+ 8 node topology succeeded!
  DV: Simple topology succeeded!
  DV: Two paths with equal costs succeeded!
  DV: Path change to unreachable succeeded!
  DV: Link addition succeeded!
  DV: Topology in MP instructions succeeded!
  DV: Changes to topology in MP instructions succeeded!
--5:  DV: Changes to topology in MP instructions, 1 path unreachable failed
+ DV: Changes to topology in MP instructions, 1 path unreachable succeeded!
  DV: Multiple changes to topology in MP instructions succeeded!
--5:  DV: 8 node topology failed
+ DV: 8 node topology succeeded!
 ====================
 
-version:10
-score: 80/100
-all-time best score (your current grade): 80/100
+version:11
+score: 100/100
+all-time best score (your current grade): 100/100
 
 
