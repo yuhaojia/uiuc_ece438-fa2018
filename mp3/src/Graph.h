@@ -85,7 +85,17 @@ class Node {
             for(int i = 0; i<Edges.size(); i++){
                 if(Edges[i].left == e.left && Edges[i].right == e.right){
                     if(e.weight <0){
-                        Edges.erase(Edges.begin() + i);
+                        vector<Edge> tmp_vec;
+                        for(int j = 0 ; j < Edges.size(); j++){
+                            if(j != i){
+                                tmp_vec.push_back(Edges[j]);
+                            }
+                        }
+                        Edges.clear();
+                        for(int j = 0; j < tmp_vec.size(); j++){
+                            Edges.push_back(tmp_vec[j]);
+                        }
+                        //Edges.erase(Edges.begin() + i);
                         return 1;
                     }else{
                         Edges[i].weight = e.weight;
@@ -135,7 +145,17 @@ public:
 
         for(int i = 0; i < Edges.size(); i++){
             if(Edges[i].left == deltaEdge.left && Edges[i].right == deltaEdge.right && deltaEdge.weight == BIGUNDEFINED){
-                Edges.erase(Edges.begin()+i);
+                vector<Edge> tmp_vec;
+                for(int j = 0 ; j < Edges.size(); j++){
+                    if(j != i){
+                        tmp_vec.push_back(Edges[j]);
+                    }
+                }
+                Edges.clear();
+                for(int j = 0; j < tmp_vec.size(); j++){
+                    Edges.push_back(tmp_vec[j]);
+                }
+                //Edges.erase(Edges.begin()+i);
                 return;
             }else if (Edges[i].left == deltaEdge.left && Edges[i].right == deltaEdge.right){
                 Edges[i].weight = deltaEdge.weight;
