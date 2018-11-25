@@ -23,7 +23,7 @@ void MessageProc(string line, int &src, int &dst, string &msg){
 
 int TieBreak(unordered_map<int,Node>& Q,unordered_map<int,int>& dist){
     int result = -1;
-    int MinDist = BIGINTNUM;
+    int MinDist = 999999999;
     for ( auto it = dist.begin(); it != dist.end(); ++it ){
         if(it->second < MinDist && Q.find(it->first) != Q.end()){
             result = it->first;
@@ -44,7 +44,7 @@ void Dijkstra(Graph g, int src, unordered_map<int,int> & dist, unordered_map<int
     unordered_map<int,Node> Q;
     //Initialization
     for ( auto it = g.Nodes.begin(); it != g.Nodes.end(); ++it ){ //
-        dist[it->first] = BIGINTNUM;
+        dist[it->first] = 999999999;
         prev[it->first] = UNDEFINED;
         Q.insert(make_pair(it->first,it->second));
     }
@@ -93,7 +93,7 @@ void OutTopology(Graph g, int src,unordered_map<int,int> & dist, unordered_map<i
             dst++;
             continue;
         }
-        if(dist[dst] == BIGINTNUM){
+        if(dist[dst] == 999999999){
             dst++;
             continue;
         }
@@ -195,7 +195,7 @@ int main(int argc, char** argv) {
         string msg = "";
         MessageProc(line, src, dst, msg);
 
-        if(CostTable[src][dst] == BIGINTNUM){
+        if(CostTable[src][dst] == 999999999){
             outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
             continue;
@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
             int src,dst;
             string msg = "";
             MessageProc(line, src, dst, msg);
-            if(CostTable[src][dst] == BIGINTNUM){
+            if(CostTable[src][dst] == 999999999){
                 outfilestream<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 cout<<"from "<<src<<" to "<<dst<<" cost infinite hops unreachable message "<<msg<<endl;
                 continue;
